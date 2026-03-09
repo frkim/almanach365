@@ -16,26 +16,13 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
     name: skuName
   }
   properties: {
-    allowBlobPublicAccess: true
+    allowBlobPublicAccess: false
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true
   }
 }
 
-resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
-  parent: storageAccount
-  name: 'default'
-  properties: {}
-}
-
-// Enable static website hosting on the $web container
-resource webContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' = {
-  parent: blobService
-  name: '$web'
-  properties: {
-    publicAccess: 'Blob'
-  }
-}
+// $web container is auto-created by 'az storage blob service-properties update --static-website'
 
 @description('Primary static website endpoint.')
 output staticWebsiteUrl string = storageAccount.properties.primaryEndpoints.web
