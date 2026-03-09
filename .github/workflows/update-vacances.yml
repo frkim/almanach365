@@ -1,0 +1,42 @@
+name: Update vacances.json
+
+on:
+  schedule:
+    # 1st day of each month at 06:00 UTC
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  DATAGOUV_API_KEY: ${{ secrets.DATAGOUV_API_KEY }}
+
+jobs:
+  update:
+    name: Fetch & update vacation data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run update script
+        run: python scripts/update-vacances.py
+
+      - name: Check for changes
+        id: diff
+        run: |
+          git diff --quiet data/vacances.json && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit & push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/vacances.json
+          git commit -m "chore: update vacances.json from data.education.gouv.fr"
+          git push
