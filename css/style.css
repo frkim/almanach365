@@ -1,0 +1,509 @@
+/* ============================================
+  almanach365 - Calendrier français
+   Styles Material Design inspirés
+   ============================================ */
+
+/* ---------- Variables ---------- */
+:root {
+  --primary: #1565C0;
+  --primary-light: #1E88E5;
+  --primary-dark: #0D47A1;
+  --accent: #FF6F00;
+  --bg: #FAFAFA;
+  --surface: #FFFFFF;
+  --text: #212121;
+  --text-secondary: #757575;
+  --border: #E0E0E0;
+  --samedi-bg: #e8e8ff;
+  --dimanche-bg: #88bbff;
+  --ferie-bg: #ffaaaa;
+  --ferie-text: #ffffff;
+  --today-bg: #ff4040;
+  --today-border: #ff6666;
+  --vacances-a: #e8f5e9;
+  --vacances-b: #fffde7;
+  --vacances-c: #ffebee;
+  --vacances-a-text: #00c000;
+  --vacances-b-text: #ffff00;
+  --vacances-c-text: #ff0000;
+  --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --radius: 4px;
+  --font: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 14px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: #fff;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-2);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.app-logo h1 span {
+  font-weight: 300;
+  opacity: 0.85;
+}
+
+#current-datetime {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* ---------- Controls Bar (removed) ---------- */
+
+/* ---------- Month Navigation (removed) ---------- */
+
+/* ---------- Zone Info ---------- */
+.zone-info {
+  max-width: 1200px;
+  margin: 16px auto;
+  padding: 0 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.zone-card {
+  flex: 1;
+  min-width: 250px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  box-shadow: var(--shadow-1);
+  border-left: 4px solid;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.zone-card:hover {
+  box-shadow: var(--shadow-2);
+}
+
+.zone-card.zone-active {
+  opacity: 1;
+}
+
+.zone-card.zone-inactive {
+  opacity: 0.4;
+}
+
+.zone-card-a { border-left-color: var(--vacances-a-text); }
+.zone-card-b { border-left-color: var(--vacances-b-text); }
+.zone-card-c { border-left-color: var(--vacances-c-text); }
+
+.zone-card h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.zone-card p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ---------- Calendar Container ---------- */
+#calendar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 8px 4px;
+}
+
+/* ---------- Year Navigation ---------- */
+.year-nav {
+  max-width: 1200px;
+  margin: 0 auto 12px;
+  padding: 0 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.year-nav-btn {
+  background: var(--surface);
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-1);
+}
+
+.year-nav-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--shadow-2);
+}
+
+.year-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ---------- Semester Layout ---------- */
+.semester-wrapper {
+  margin: 0 auto 20px;
+  overflow-x: auto;
+}
+
+.semester-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 10px;
+  line-height: 12px;
+  width: 100%;
+  box-shadow: var(--shadow-1);
+  table-layout: fixed;
+}
+
+.sem-month-header {
+  background: linear-gradient(#f8f8f8, #d8d8d8);
+  color: #202020;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+  padding: 6px 2px;
+  border: 1px solid #c0c0c0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 1px #ffffff;
+}
+
+.semester-table tbody tr {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.semester-table tbody tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+.semester-table td {
+  white-space: nowrap;
+  vertical-align: middle;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 10px;
+  line-height: 1.4;
+  border-bottom: 1px solid #e8e8e8;
+  color: #505a78;
+}
+
+/* Day number */
+.sn {
+  text-align: right;
+  font-weight: 600;
+  width: 2ch;
+  min-width: 2ch;
+  max-width: 3ch;
+  padding: 1px 3px 1px 1px;
+  color: #333;
+}
+
+/* Day letter */
+.sl {
+  text-align: left;
+  font-weight: 500;
+  width: 1ch;
+  min-width: 1ch;
+  max-width: 3ch;
+  padding: 1px 1ch;
+  color: #555;
+}
+
+/* Vacation indicator: border-left on .sn set inline by JS */
+
+/* Saint / holiday name */
+.ss {
+  padding-left: 2px;
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Week number */
+.sw {
+  text-align: right;
+  font-size: 10px;
+  font-weight: 700;
+  color: #000000;
+  width: 16px;
+  min-width: 16px;
+  max-width: 16px;
+  padding-right: 2px;
+}
+
+/* Month separator border */
+.sem-bl {
+  border-left: 2px solid #c0c0c0;
+}
+
+/* Empty cells (months < 31 days) */
+.sem-empty {
+  background: #f0f0f0;
+}
+
+/* ---------- Day Type Styles ---------- */
+
+/* Saturdays */
+.is-samedi {
+  background-color: #e8e8ff;
+}
+
+/* Sundays */
+.is-dimanche {
+  background-color: #88bbff;
+  color: #ffffff;
+}
+.is-dimanche.sn,
+.is-dimanche.sl {
+  color: #ffffff;
+  font-weight: 700;
+}
+.is-dimanche.ss {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Special dates (Mardi-Gras, Rameaux, etc.) */
+.is-special.ss {
+  color: #6a1b9a;
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Holidays (jours fériés) */
+.is-ferie {
+  background-color: #ffaaaa;
+  color: #ffffff;
+}
+.is-ferie.ss {
+  color: #ffffff;
+  /* font-weight: 700; */
+  /* text-transform: uppercase; */
+  font-size: 10px;
+}
+.is-ferie.sn,
+.is-ferie.sl {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Today */
+.is-today {
+  background-color: #ff4040 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px #ff6666;
+}
+.is-today.sn,
+.is-today.sl,
+.is-today.ss,
+.is-today.sw {
+  color: #ffffff !important;
+}
+
+/* ---------- Vacation Zone Bar Cell ---------- */
+.sz {
+  width: 2px;
+  min-width: 2px;
+  max-width: 2px;
+  padding: 0 !important;
+  border-bottom: 1px solid #e8e8e8;
+  vertical-align: middle;
+}
+
+.sz.sem-bl {
+  width: 3px !important;
+  min-width: 3px !important;
+  max-width: 3px !important;
+  overflow: hidden;
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+  background: var(--primary-dark);
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  padding: 16px;
+  font-size: 0.8rem;
+}
+
+.app-footer a {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Legend ---------- */
+.legend {
+  max-width: 1200px;
+  margin: 16px auto;
+  padding: 0 8px;
+}
+
+.legend-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: var(--surface);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 870px) {
+  .sl {
+    padding-right: 1ch;
+  }
+}
+
+@media (max-width: 900px) {
+  .header-top {
+    padding: 10px 12px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #calendar-container {
+    padding: 0 4px 12px;
+  }
+
+  .zone-info {
+    padding: 0 8px;
+  }
+
+  .semester-table {
+    font-size: 10px;
+    table-layout: auto;
+  }
+
+  .sem-month-header {
+    font-size: 10px;
+    padding: 4px 1px;
+  }
+
+  .ss {
+    max-width: 80px;
+  }
+}
+
+@media (max-width: 600px) {
+  .semester-table {
+    font-size: 9px;
+  }
+
+  .sem-month-header {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+
+  .sn { width: 14px; }
+  .sl { width: 11px; }
+  .sw { width: 12px; font-size: 8px; }
+
+  .zone-card {
+    min-width: 100%;
+  }
+
+  .legend-content {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  .app-header {
+    position: relative;
+    box-shadow: none;
+  }
+
+  .controls-bar,
+  .app-footer,
+  .year-nav {
+    display: none;
+  }
+
+  .semester-table {
+    box-shadow: none;
+    font-size: 10px;
+  }
+
+  .semester-wrapper {
+    page-break-inside: avoid;
+    margin-bottom: 12px;
+  }
+
+  #calendar-container {
+    max-width: 100%;
+  }
+}

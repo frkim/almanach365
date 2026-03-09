@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO -->
+  <title>Almanach365 - Calendrier français avec jours fériés, vacances scolaires et saints du jour</title>
+  <meta name="description" content="Almanach365 : calendrier annuel français complet avec les jours fériés, les vacances scolaires par zone (A, B, C), les saints du jour, les numéros de semaine et l'heure française en temps réel.">
+  <meta name="keywords" content="calendrier, almanach, français, jours fériés, vacances scolaires, zone A, zone B, zone C, saints du jour, numéro de semaine, France, calendrier annuel">
+  <meta name="author" content="almanach365">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://almanach365.z6.web.core.windows.net/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Almanach365 - Calendrier français complet">
+  <meta property="og:description" content="Calendrier annuel français avec jours fériés, vacances scolaires par zone, saints du jour et numéros de semaine.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Almanach365">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Almanach365 - Calendrier français complet">
+  <meta name="twitter:description" content="Calendrier annuel français avec jours fériés, vacances scolaires par zone, saints du jour et numéros de semaine.">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Almanach365",
+    "description": "Calendrier annuel français complet avec jours fériés, vacances scolaires par zone, saints du jour et numéros de semaine.",
+    "url": "https://almanach365.z6.web.core.windows.net/",
+    "applicationCategory": "Utility",
+    "operatingSystem": "Web",
+    "inLanguage": "fr",
+    "offers": {
+      "@type": "Offer",
+      "price": "0"
+    }
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="app-logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="32" height="32" rx="6" fill="#fff" fill-opacity="0.2"/>
+          <rect x="4" y="8" width="24" height="20" rx="3" fill="#fff"/>
+          <rect x="4" y="8" width="24" height="7" rx="3" fill="#1565C0"/>
+          <rect x="9" y="4" width="3" height="8" rx="1.5" fill="#fff"/>
+          <rect x="20" y="4" width="3" height="8" rx="1.5" fill="#fff"/>
+          <text x="16" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#1565C0">365</text>
+        </svg>
+        <h1>Almanach<span>365</span></h1>
+      </div>
+      <div id="current-datetime" aria-live="polite">Chargement...</div>
+    </div>
+
+
+  </header>
+
+  <!-- Calendar Title -->
+  <h2 id="calendar-title" style="text-align:center; margin: 16px 0 8px; color: #1565C0; font-weight: 500; font-size: 1.4rem; text-decoration: underline; text-underline-offset: 4px;"></h2>
+
+  <!-- Calendar -->
+  <main id="calendar-container" role="main"></main>
+
+  <!-- Year Navigation -->
+  <div id="year-nav" class="year-nav" aria-label="Navigation par année">
+    <button id="btn-prev-year" class="year-nav-btn" type="button" title="Année précédente">&#9664; <span id="prev-year-label"></span></button>
+    <button id="btn-next-year" class="year-nav-btn" type="button" title="Année suivante"><span id="next-year-label"></span> &#9654;</button>
+  </div>
+
+  <!-- Zone Details (clickable toggles) -->
+  <div class="zone-info" role="complementary" aria-label="Détails des zones scolaires">
+    <div class="zone-card zone-card-a zone-active" data-zone="Zone A" role="button" tabindex="0" aria-pressed="true">
+      <h3>Zone A</h3>
+      <p>Besançon, Bordeaux, Clermont-Ferrand, Dijon, Grenoble, Limoges, Lyon, Poitiers</p>
+    </div>
+    <div class="zone-card zone-card-b zone-active" data-zone="Zone B" role="button" tabindex="0" aria-pressed="true">
+      <h3>Zone B</h3>
+      <p>Aix-Marseille, Amiens, Caen, Lille, Nancy-Metz, Nantes, Nice, Orléans-Tours, Reims, Rennes, Rouen, Strasbourg</p>
+    </div>
+    <div class="zone-card zone-card-c zone-active" data-zone="Zone C" role="button" tabindex="0" aria-pressed="true">
+      <h3>Zone C</h3>
+      <p>Créteil, Montpellier, Paris, Toulouse, Versailles</p>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend" role="complementary" aria-label="Légende du calendrier">
+    <div class="legend-content">
+      <div class="legend-item">
+        <span class="legend-color" style="background:#e8e8ff;"></span> Samedi
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background:#88bbff;"></span> Dimanche
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background:#ffaaaa;"></span> Jour férié
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background:#ff4040; border-color:#ff6666;"></span> Aujourd'hui
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>&copy; <span id="footer-year">2026</span> Almanach365 &mdash; Calendrier français gratuit</p>
+    <p>Jours fériés &bull; Vacances scolaires &bull; Saints du jour &bull; Numéros de semaine</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/fetes.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

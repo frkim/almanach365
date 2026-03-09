@@ -1,2 +1,2 @@
 # almanach365
-Website that displays a year calendar view
+Calendrier français avec : jours fériés, les vacances par zone, numéro de semaine
