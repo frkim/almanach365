@@ -91,8 +91,17 @@ body {
 
 #current-datetime {
   font-size: 0.95rem;
-  opacity: 0.9;
-  font-weight: 300;
+  font-weight: 700;
+  background: rgba(255,255,255,0.2);
+  padding: 1ch;
+  border-radius: 6px;
+}
+
+#calendar-title {
+  font-size: 1.3rem;
+  font-weight: 500;
+  opacity: 0.95;
+  letter-spacing: 0.5px;
 }
 
 /* ---------- Controls Bar (removed) ---------- */
@@ -193,7 +202,7 @@ body {
 
 /* ---------- Semester Layout ---------- */
 .semester-wrapper {
-  margin: 0 auto 20px;
+  margin: 0 auto 8px;
   overflow-x: auto;
 }
 
@@ -355,18 +364,14 @@ body {
 
 /* ---------- Vacation Zone Bar Cell ---------- */
 .sz {
-  width: 2px;
   min-width: 2px;
-  max-width: 2px;
   padding: 0 !important;
   border-bottom: 1px solid #e8e8e8;
   vertical-align: middle;
 }
 
 .sz.sem-bl {
-  width: 3px !important;
-  min-width: 3px !important;
-  max-width: 3px !important;
+  min-width: 4px;
   overflow: hidden;
 }
 

@@ -24,7 +24,18 @@
   };
 
   let vacancesData = [];
-  let zonesVisibles = { 'Zone A': true, 'Zone B': true, 'Zone C': true };
+  let zonesVisibles = loadZonesCookie();
+
+  function loadZonesCookie() {
+    var def = { 'Zone A': true, 'Zone B': true, 'Zone C': true };
+    var match = document.cookie.match(/(?:^|;\s*)zones=([^;]*)/);
+    if (!match) return def;
+    try { var obj = JSON.parse(decodeURIComponent(match[1])); return obj; } catch (e) { return def; }
+  }
+
+  function saveZonesCookie() {
+    document.cookie = 'zones=' + encodeURIComponent(JSON.stringify(zonesVisibles)) + ';path=/;max-age=31536000;SameSite=Lax';
+  }
   let anneeAffichee = new Date().getFullYear();
   let datesSpeciales = {};
 
@@ -92,11 +103,16 @@
     var cards = document.querySelectorAll('.zone-card[data-zone]');
     cards.forEach(function (card) {
       var zone = card.getAttribute('data-zone');
+      // Restore saved state on card UI
+      card.classList.toggle('zone-active', zonesVisibles[zone]);
+      card.classList.toggle('zone-inactive', !zonesVisibles[zone]);
+      card.setAttribute('aria-pressed', zonesVisibles[zone] ? 'true' : 'false');
       card.addEventListener('click', function () {
         zonesVisibles[zone] = !zonesVisibles[zone];
         card.classList.toggle('zone-active', zonesVisibles[zone]);
         card.classList.toggle('zone-inactive', !zonesVisibles[zone]);
         card.setAttribute('aria-pressed', zonesVisibles[zone] ? 'true' : 'false');
+        saveZonesCookie();
         genererCalendrier();
       });
       card.addEventListener('keydown', function (e) {
@@ -185,19 +201,6 @@
     var sem1 = creerSemestre(0, 5);
     container.appendChild(sem1);
 
-    // Afficher la largeur du tableau juste avant le 1er semestre
-    var widthInfo = document.createElement('div');
-    widthInfo.id = 'table-width-info';
-    widthInfo.style.cssText = 'text-align:center;font-size:0.8rem;color:#757575;margin-bottom:4px;';
-    container.insertBefore(widthInfo, sem1);
-
-    function updateWidthInfo() {
-      var tbl = sem1.querySelector('table');
-      if (tbl) widthInfo.textContent = 'Largeur du tableau : ' + tbl.offsetWidth + ' px';
-    }
-    updateWidthInfo();
-    window.addEventListener('resize', updateWidthInfo);
-
     // Semestre 2 : Juillet - Décembre
     container.appendChild(creerSemestre(6, 11));
   }
@@ -213,10 +216,12 @@
     table.className = 'semester-table';
 
     // Colgroup pour fixer les largeurs de colonnes
+    var nbZones = Object.keys(zonesVisibles).filter(function (z) { return zonesVisibles[z]; }).length;
+    var szBarWidth = Math.max(2, nbZones * 2);
     var colgroup = document.createElement('colgroup');
     for (var m = moisDebut; m <= moisFin; m++) {
       var colSz = document.createElement('col');
-      colSz.style.width = (m > moisDebut) ? '3px' : '2px';
+      colSz.style.width = (m > moisDebut) ? (szBarWidth + 2) + 'px' : szBarWidth + 'px';
       colgroup.appendChild(colSz);
       var colSn = document.createElement('col');
       colSn.style.width = '2ch';
