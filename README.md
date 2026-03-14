@@ -1,5 +1,9 @@
 # Almanach365
 
+[![Deploy](https://github.com/frkim/almanach365/actions/workflows/deploy.yml/badge.svg)](https://github.com/frkim/almanach365/actions/workflows/deploy.yml)
+[![Purge CDN](https://github.com/frkim/almanach365/actions/workflows/purge-cdn.yml/badge.svg)](https://github.com/frkim/almanach365/actions/workflows/purge-cdn.yml)
+[![Update vacances](https://github.com/frkim/almanach365/actions/workflows/update-vacances.yml/badge.svg)](https://github.com/frkim/almanach365/actions/workflows/update-vacances.yml)
+
 Calendrier annuel français complet — 100 % statique, sans framework, sans dépendance serveur.
 
 ## Fonctionnalités

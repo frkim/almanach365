@@ -1,0 +1,41 @@
+name: Purge Front Door cache
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Azure Storage Static Website"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  AZURE_RESOURCE_GROUP: rg-almanach365
+  AZURE_FRONTDOOR_PROFILE: ${{ secrets.AZURE_FRONTDOOR_PROFILE }}
+  AZURE_FRONTDOOR_ENDPOINT: ${{ secrets.AZURE_FRONTDOOR_ENDPOINT }}
+
+jobs:
+  purge:
+    name: Purge Front Door cache
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Purge all cached content
+        if: ${{ env.AZURE_FRONTDOOR_PROFILE != '' && env.AZURE_FRONTDOOR_ENDPOINT != '' }}
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az afd endpoint purge \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --profile-name ${{ env.AZURE_FRONTDOOR_PROFILE }} \
+              --endpoint-name ${{ env.AZURE_FRONTDOOR_ENDPOINT }} \
+              --content-paths '/*'

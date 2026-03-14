@@ -14,8 +14,6 @@ env:
   AZURE_RESOURCE_GROUP: rg-almanach365
   AZURE_STORAGE_ACCOUNT: almanach365
   AZURE_LOCATION: westeurope
-  AZURE_FRONTDOOR_PROFILE: ${{ secrets.AZURE_FRONTDOOR_PROFILE }}
-  AZURE_FRONTDOOR_ENDPOINT: ${{ secrets.AZURE_FRONTDOOR_ENDPOINT }}
 
 jobs:
   # ----- Infrastructure (Bicep) -----
@@ -137,14 +135,3 @@ jobs:
           inlineScript: |
             az storage account show --name ${{ env.AZURE_STORAGE_ACCOUNT }} \
               --query "primaryEndpoints.web" --output tsv
-
-      - name: Purge Front Door cache
-        if: ${{ env.AZURE_FRONTDOOR_PROFILE != '' && env.AZURE_FRONTDOOR_ENDPOINT != '' }}
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az afd endpoint purge \
-              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-              --profile-name ${{ env.AZURE_FRONTDOOR_PROFILE }} \
-              --endpoint-name ${{ env.AZURE_FRONTDOOR_ENDPOINT }} \
-              --content-paths '/*'
