@@ -29,6 +29,8 @@
   // Date range selection state
   let selectionStart = null;
   let selectionEnd = null;
+  let isDragging = false;
+  let dragStart = null;
 
   function loadZonesCookie() {
     var def = { 'Zone A': true, 'Zone B': true, 'Zone C': true };
@@ -40,6 +42,39 @@
   function saveZonesCookie() {
     document.cookie = 'zones=' + encodeURIComponent(JSON.stringify(zonesVisibles)) + ';path=/;max-age=31536000;SameSite=Lax';
   }
+
+  /** Dark theme support */
+  function loadThemeCookie() {
+    var match = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);
+    return match ? match[1] : 'light';
+  }
+
+  function saveThemeCookie(theme) {
+    document.cookie = 'theme=' + theme + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    var btn = document.getElementById('btn-theme-toggle');
+    if (btn) {
+      btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+      btn.title = theme === 'dark' ? 'Thème clair' : 'Thème sombre';
+    }
+  }
+
+  function setupThemeToggle() {
+    var currentTheme = loadThemeCookie();
+    applyTheme(currentTheme);
+    var btn = document.getElementById('btn-theme-toggle');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+        saveThemeCookie(newTheme);
+      });
+    }
+  }
+
   let anneeAffichee = new Date().getFullYear();
   let datesSpeciales = {};
 
@@ -47,9 +82,12 @@
    * Initialisation de l'application
    */
   function init() {
+    setupThemeToggle();
     setupYearNav();
     setupZoneCards();
     setupSelectionClear();
+    document.addEventListener('mouseup', handleDocumentMouseUp);
+    document.addEventListener('mousedown', handleClickOutside);
     chargerVacances().then(function () {
       genererCalendrier();
       demarrerHorloge();
@@ -197,32 +235,132 @@
       btn.addEventListener('click', function () {
         selectionStart = null;
         selectionEnd = null;
-        genererCalendrier();
+        isDragging = false;
+        dragStart = null;
+        applySelectionClasses();
         updateSelectionBar();
       });
     }
   }
 
   /**
-   * Handle a day cell click for date range selection
+   * Parse a data-date attribute value into a Date
+   */
+  function parseDateAttr(str) {
+    var parts = str.split('-');
+    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  }
+
+  /**
+   * Normalize start/end so start <= end
+   */
+  function normalizeRange(a, b) {
+    if (b < a) return { start: b, end: a };
+    return { start: a, end: b };
+  }
+
+  /**
+   * Handle mousedown on a day cell — begin drag or start click-click
+   */
+  function handleDayMouseDown(date) {
+    isDragging = true;
+    dragStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    // Immediately show the start point
+    selectionStart = new Date(dragStart);
+    selectionEnd = null;
+    applySelectionClasses();
+    updateSelectionBar();
+  }
+
+  /**
+   * Handle mousemove over a day cell during drag — live preview
+   */
+  function handleDayMouseMove(date) {
+    if (!isDragging || !dragStart) return;
+    var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    var range = normalizeRange(dragStart, d);
+    selectionStart = range.start;
+    selectionEnd = range.end;
+    applySelectionClasses();
+    updateSelectionBar();
+  }
+
+  /**
+   * Handle mouseup — finalize drag selection
+   */
+  function handleDayMouseUp(date) {
+    if (!isDragging || !dragStart) return;
+    isDragging = false;
+    var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    var range = normalizeRange(dragStart, d);
+    selectionStart = range.start;
+    selectionEnd = range.end;
+    dragStart = null;
+    applySelectionClasses();
+    updateSelectionBar();
+  }
+
+  /**
+   * Cancel drag if mouse leaves the document
+   */
+  function handleDocumentMouseUp() {
+    if (isDragging && dragStart) {
+      isDragging = false;
+      // Keep whatever is currently shown
+      if (!selectionEnd) {
+        selectionEnd = null; // single-click; wait for second click
+      }
+      dragStart = null;
+    }
+  }
+
+  /**
+   * Clear selection when clicking outside the calendar and selection bar
+   */
+  function handleClickOutside(e) {
+    var calendar = document.getElementById('calendar-container');
+    var bar = document.getElementById('selection-bar');
+    if (!selectionStart) return;
+    if (calendar && calendar.contains(e.target)) return;
+    if (bar && bar.contains(e.target)) return;
+    selectionStart = null;
+    selectionEnd = null;
+    isDragging = false;
+    dragStart = null;
+    applySelectionClasses();
+    updateSelectionBar();
+  }
+
+  /**
+   * Handle a simple click for click-click selection mode
    */
   function handleDayClick(date) {
-    if (!selectionStart || (selectionStart && selectionEnd)) {
-      // Start a new selection
-      selectionStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      selectionEnd = null;
-    } else {
-      // Set end date
-      selectionEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      // Ensure start <= end
-      if (selectionEnd < selectionStart) {
-        var tmp = selectionStart;
-        selectionStart = selectionEnd;
-        selectionEnd = tmp;
+    // If we just finished a drag over multiple cells, don't treat as click
+    // (mouseup already handled it)
+  }
+
+  /**
+   * Apply is-selected / is-selection-endpoint classes without regenerating the calendar
+   */
+  function applySelectionClasses() {
+    var container = document.getElementById('calendar-container');
+    if (!container) return;
+    // Remove old selection classes
+    var oldSel = container.querySelectorAll('.is-selected, .is-selection-endpoint');
+    for (var i = 0; i < oldSel.length; i++) {
+      oldSel[i].classList.remove('is-selected', 'is-selection-endpoint');
+    }
+    if (!selectionStart) return;
+    // Apply new classes
+    var cells = container.querySelectorAll('td[data-date]');
+    for (var i = 0; i < cells.length; i++) {
+      var cellDate = parseDateAttr(cells[i].getAttribute('data-date'));
+      if (isSelectionEndpoint(cellDate)) {
+        cells[i].classList.add('is-selection-endpoint');
+      } else if (isInSelection(cellDate)) {
+        cells[i].classList.add('is-selected');
       }
     }
-    genererCalendrier();
-    updateSelectionBar();
   }
 
   /**
@@ -480,13 +618,23 @@
 
     table.appendChild(tbody);
 
-    // Delegated click handler for date range selection
-    table.addEventListener('click', function (e) {
+    // Delegated mouse handlers for date range selection (click-click + click-drag)
+    table.addEventListener('mousedown', function (e) {
       var td = e.target.closest('td[data-date]');
       if (!td) return;
-      var parts = td.getAttribute('data-date').split('-');
-      var clickedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-      handleDayClick(clickedDate);
+      e.preventDefault(); // prevent text selection while dragging
+      handleDayMouseDown(parseDateAttr(td.getAttribute('data-date')));
+    });
+    table.addEventListener('mousemove', function (e) {
+      if (!isDragging) return;
+      var td = e.target.closest('td[data-date]');
+      if (!td) return;
+      handleDayMouseMove(parseDateAttr(td.getAttribute('data-date')));
+    });
+    table.addEventListener('mouseup', function (e) {
+      var td = e.target.closest('td[data-date]');
+      if (!td) return;
+      handleDayMouseUp(parseDateAttr(td.getAttribute('data-date')));
     });
 
     wrapper.appendChild(table);

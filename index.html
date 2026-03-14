@@ -54,6 +54,10 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
+  <!-- Apply saved theme early to prevent flash -->
+  <script>
+    (function(){var m=document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);if(m&&m[1]==='dark')document.documentElement.setAttribute('data-theme','dark');})();
+  </script>
 </head>
 <body>
 
@@ -72,7 +76,10 @@
         <h1>Almanach<span>365</span></h1>
       </div>
       <h2 id="calendar-title"></h2>
-      <div id="current-datetime" aria-live="polite">Chargement...</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="current-datetime" aria-live="polite">Chargement...</div>
+        <button id="btn-theme-toggle" class="theme-toggle-btn" type="button" title="Changer le thème" aria-label="Changer le thème">🌙</button>
+      </div>
     </div>
 
 
@@ -127,7 +134,7 @@
         <span class="legend-color" style="background:#ff4040; border-color:#ff6666;"></span> Aujourd'hui
       </div>
       <div class="legend-item">
-        <span class="legend-color" style="background:#ffffff; border-color:#1565C0;"></span> Sélection
+        <span class="legend-color" style="background:rgba(21,101,192,0.20); border-color:#1565C0; border-left:3px solid #1565C0;"></span> Sélection
       </div>
     </div>
   </div>
