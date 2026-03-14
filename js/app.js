@@ -420,24 +420,33 @@
 
     bar.style.display = '';
 
-    // Count total days and business days
+    // Count total days, business days, weekend days and bank holidays
     var totalDays = 0;
     var businessDays = 0;
+    var weekendDays = 0;
+    var bankHolidays = 0;
     var cursor = new Date(selectionStart.getFullYear(), selectionStart.getMonth(), selectionStart.getDate());
     var endTime = selectionEnd.getTime();
 
     while (cursor.getTime() <= endTime) {
       totalDays++;
       var dow = cursor.getDay();
-      if (dow !== 0 && dow !== 6 && !estJourFerie(cursor)) {
-        businessDays++;
-      }
+      var isWeekend = (dow === 0 || dow === 6);
+      var isFerie = estJourFerie(cursor);
+      if (isWeekend) weekendDays++;
+      if (isFerie) bankHolidays++;
+      if (!isWeekend && !isFerie) businessDays++;
       cursor.setDate(cursor.getDate() + 1);
     }
 
-    text.textContent = 'Du ' + formatDateFr(selectionStart) + ' au ' + formatDateFr(selectionEnd) +
-      ' — ' + totalDays + ' jour' + (totalDays > 1 ? 's' : '') +
-      ' dont ' + businessDays + ' jour' + (businessDays > 1 ? 's' : '') + ' ouvrés';
+    var parts = [
+      'Du ' + formatDateFr(selectionStart) + ' au ' + formatDateFr(selectionEnd),
+      totalDays + ' jour' + (totalDays > 1 ? 's' : ''),
+      businessDays + ' jour' + (businessDays > 1 ? 's' : '') + ' ouvrés',
+      weekendDays + ' WE',
+      bankHolidays + ' férié' + (bankHolidays > 1 ? 's' : '')
+    ];
+    text.textContent = parts.join(' — ');
   }
 
   /**
