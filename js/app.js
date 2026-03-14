@@ -481,9 +481,8 @@
     var table = document.createElement('table');
     table.className = 'semester-table';
 
-    // Colgroup pour fixer les largeurs de colonnes
-    var nbZones = Object.keys(zonesVisibles).filter(function (z) { return zonesVisibles[z]; }).length;
-    var szBarWidth = Math.max(2, nbZones * 2);
+    // Colgroup pour fixer les largeurs de colonnes (largeur fixe pour les barres de vacances)
+    var szBarWidth = 6;
     var colgroup = document.createElement('colgroup');
     for (var m = moisDebut; m <= moisFin; m++) {
       var colSz = document.createElement('col');
