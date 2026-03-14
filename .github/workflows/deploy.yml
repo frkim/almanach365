@@ -138,6 +138,7 @@ jobs:
               --query "primaryEndpoints.web" --output tsv
 
       - name: Purge Front Door cache
+        if: ${{ env.AZURE_FRONTDOOR_PROFILE != '' && env.AZURE_FRONTDOOR_ENDPOINT != '' }}
         uses: azure/cli@v2
         with:
           inlineScript: |
