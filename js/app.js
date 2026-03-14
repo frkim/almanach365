@@ -26,6 +26,10 @@
   let vacancesData = [];
   let zonesVisibles = loadZonesCookie();
 
+  // Date range selection state
+  let selectionStart = null;
+  let selectionEnd = null;
+
   function loadZonesCookie() {
     var def = { 'Zone A': true, 'Zone B': true, 'Zone C': true };
     var match = document.cookie.match(/(?:^|;\s*)zones=([^;]*)/);
@@ -45,6 +49,7 @@
   function init() {
     setupYearNav();
     setupZoneCards();
+    setupSelectionClear();
     chargerVacances().then(function () {
       genererCalendrier();
       demarrerHorloge();
@@ -184,6 +189,113 @@
   };
 
   /**
+   * Setup clear selection button
+   */
+  function setupSelectionClear() {
+    var btn = document.getElementById('btn-clear-selection');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        selectionStart = null;
+        selectionEnd = null;
+        genererCalendrier();
+        updateSelectionBar();
+      });
+    }
+  }
+
+  /**
+   * Handle a day cell click for date range selection
+   */
+  function handleDayClick(date) {
+    if (!selectionStart || (selectionStart && selectionEnd)) {
+      // Start a new selection
+      selectionStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      selectionEnd = null;
+    } else {
+      // Set end date
+      selectionEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      // Ensure start <= end
+      if (selectionEnd < selectionStart) {
+        var tmp = selectionStart;
+        selectionStart = selectionEnd;
+        selectionEnd = tmp;
+      }
+    }
+    genererCalendrier();
+    updateSelectionBar();
+  }
+
+  /**
+   * Check if a date is inside the current selection range
+   */
+  function isInSelection(date) {
+    if (!selectionStart || !selectionEnd) return false;
+    var t = date.getTime();
+    return t >= selectionStart.getTime() && t <= selectionEnd.getTime();
+  }
+
+  /**
+   * Check if a date is a selection endpoint
+   */
+  function isSelectionEndpoint(date) {
+    if (!selectionStart) return false;
+    var t = date.getTime();
+    if (t === selectionStart.getTime()) return true;
+    if (selectionEnd && t === selectionEnd.getTime()) return true;
+    return false;
+  }
+
+  /**
+   * Format a date as "DD/MM/YYYY"
+   */
+  function formatDateFr(date) {
+    var d = date.getDate();
+    var m = date.getMonth() + 1;
+    return (d < 10 ? '0' : '') + d + '/' + (m < 10 ? '0' : '') + m + '/' + date.getFullYear();
+  }
+
+  /**
+   * Calculate selection stats and update the info bar
+   */
+  function updateSelectionBar() {
+    var bar = document.getElementById('selection-bar');
+    var text = document.getElementById('selection-text');
+    if (!bar || !text) return;
+
+    if (!selectionStart) {
+      bar.style.display = 'none';
+      return;
+    }
+
+    if (!selectionEnd) {
+      bar.style.display = '';
+      text.textContent = 'Début : ' + formatDateFr(selectionStart) + ' — cliquez sur une 2e date pour définir la période';
+      return;
+    }
+
+    bar.style.display = '';
+
+    // Count total days and business days
+    var totalDays = 0;
+    var businessDays = 0;
+    var cursor = new Date(selectionStart.getFullYear(), selectionStart.getMonth(), selectionStart.getDate());
+    var endTime = selectionEnd.getTime();
+
+    while (cursor.getTime() <= endTime) {
+      totalDays++;
+      var dow = cursor.getDay();
+      if (dow !== 0 && dow !== 6 && !estJourFerie(cursor)) {
+        businessDays++;
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    text.textContent = 'Du ' + formatDateFr(selectionStart) + ' au ' + formatDateFr(selectionEnd) +
+      ' — ' + totalDays + ' jour' + (totalDays > 1 ? 's' : '') +
+      ' dont ' + businessDays + ' jour' + (businessDays > 1 ? 's' : '') + ' ouvrés';
+  }
+
+  /**
    * Génère le calendrier complet pour l'année sélectionnée
    * Layout: 2 tableaux semestriels (6 mois en colonnes)
    */
@@ -283,6 +395,8 @@
           if (ferie) classes.push('is-ferie');
           if (isToday) classes.push('is-today');
           if (dateSpeciale) classes.push('is-special');
+          if (isSelectionEndpoint(date)) classes.push('is-selection-endpoint');
+          else if (isInSelection(date)) classes.push('is-selected');
 
           // Vacances
           var zonesEnVacances = [];
@@ -317,12 +431,14 @@
           var tdNum = document.createElement('td');
           tdNum.className = 'sn ' + cellClass;
           tdNum.textContent = jour;
+          tdNum.setAttribute('data-date', anneeAffichee + '-' + (m + 1) + '-' + jour);
           tr.appendChild(tdNum);
 
           // Cellule lettre du jour
           var tdLettre = document.createElement('td');
           tdLettre.className = 'sl ' + cellClass;
           tdLettre.textContent = JOURS_LETTRE[jourSemaine];
+          tdLettre.setAttribute('data-date', anneeAffichee + '-' + (m + 1) + '-' + jour);
           tr.appendChild(tdLettre);
 
           // Cellule nom (saint / férié / spécial)
@@ -335,6 +451,7 @@
           } else {
             tdNom.textContent = saint;
           }
+          tdNom.setAttribute('data-date', anneeAffichee + '-' + (m + 1) + '-' + jour);
           tr.appendChild(tdNom);
 
           // Cellule numéro de semaine (affiché le lundi)
@@ -362,6 +479,16 @@
     }
 
     table.appendChild(tbody);
+
+    // Delegated click handler for date range selection
+    table.addEventListener('click', function (e) {
+      var td = e.target.closest('td[data-date]');
+      if (!td) return;
+      var parts = td.getAttribute('data-date').split('-');
+      var clickedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      handleDayClick(clickedDate);
+    });
+
     wrapper.appendChild(table);
     return wrapper;
   }

@@ -78,6 +78,14 @@
 
   </header>
 
+  <!-- Selection Info Bar -->
+  <div id="selection-bar" class="selection-bar" style="display:none;" aria-live="polite">
+    <div class="selection-bar-content">
+      <span id="selection-text"></span>
+      <button id="btn-clear-selection" class="selection-clear-btn" type="button" title="Effacer la sélection">✕ Effacer</button>
+    </div>
+  </div>
+
   <!-- Calendar -->
   <main id="calendar-container" role="main"></main>
 
@@ -117,6 +125,9 @@
       </div>
       <div class="legend-item">
         <span class="legend-color" style="background:#ff4040; border-color:#ff6666;"></span> Aujourd'hui
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background:#ffffff; border-color:#1565C0;"></span> Sélection
       </div>
     </div>
   </div>
