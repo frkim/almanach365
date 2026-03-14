@@ -38,4 +38,5 @@ jobs:
               --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
               --profile-name ${{ env.AZURE_FRONTDOOR_PROFILE }} \
               --endpoint-name ${{ env.AZURE_FRONTDOOR_ENDPOINT }} \
-              --content-paths '/*'
+              --content-paths '/*' \
+              --no-wait
