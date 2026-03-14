@@ -10,7 +10,6 @@ permissions:
   contents: write
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   DATAGOUV_API_KEY: ${{ secrets.DATAGOUV_API_KEY }}
 
 jobs:
@@ -18,10 +17,10 @@ jobs:
     name: Fetch & update vacation data
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
