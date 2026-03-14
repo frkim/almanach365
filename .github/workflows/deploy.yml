@@ -104,6 +104,30 @@ jobs:
               --content-type 'application/json' \
               --pattern 'data/*.json'
 
+            az storage blob upload \
+              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --container-name '$web' \
+              --file favicon.svg \
+              --name favicon.svg \
+              --overwrite \
+              --content-type 'image/svg+xml'
+
+            az storage blob upload \
+              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --container-name '$web' \
+              --file favicon-32.png \
+              --name favicon-32.png \
+              --overwrite \
+              --content-type 'image/png'
+
+            az storage blob upload \
+              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --container-name '$web' \
+              --file apple-touch-icon.png \
+              --name apple-touch-icon.png \
+              --overwrite \
+              --content-type 'image/png'
+
       - name: Show website URL
         uses: azure/cli@v2
         with:
