@@ -89,6 +89,9 @@ Chaque `push` sur `main` déclenche le workflow `.github/workflows/deploy.yml` q
 1. Provisionne l'infrastructure via Bicep
 2. Uploade les fichiers statiques dans le conteneur `$web`
 
+Version sans cache : [https://almanach365.z6.web.core.windows.net](https://almanach365.z6.web.core.windows.net) 
+
+
 ## Licence
 
 Voir [LICENSE](LICENSE).
