@@ -229,18 +229,25 @@
   /**
    * Setup clear selection button
    */
+  function clearSelection() {
+    selectionStart = null;
+    selectionEnd = null;
+    isDragging = false;
+    dragStart = null;
+    applySelectionClasses();
+    updateSelectionBar();
+  }
+
   function setupSelectionClear() {
     var btn = document.getElementById('btn-clear-selection');
     if (btn) {
-      btn.addEventListener('click', function () {
-        selectionStart = null;
-        selectionEnd = null;
-        isDragging = false;
-        dragStart = null;
-        applySelectionClasses();
-        updateSelectionBar();
-      });
+      btn.addEventListener('click', clearSelection);
     }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && selectionStart) {
+        clearSelection();
+      }
+    });
   }
 
   /**
