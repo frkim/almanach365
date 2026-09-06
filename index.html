@@ -76,7 +76,11 @@
         </svg>
         <h1>Almanach<span>365</span></h1>
       </div>
-      <h2 id="calendar-title"></h2>
+      <div class="calendar-heading" aria-label="Navigation par année">
+        <button id="btn-prev-year" class="year-nav-btn" type="button" title="Année précédente" aria-label="Année précédente">← <span id="prev-year-label"></span></button>
+        <h2 id="calendar-title"></h2>
+        <button id="btn-next-year" class="year-nav-btn" type="button" title="Année suivante" aria-label="Année suivante"><span id="next-year-label"></span> →</button>
+      </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <div id="current-datetime" aria-live="polite">Chargement...</div>
         <button id="btn-theme-toggle" class="theme-toggle-btn" type="button" title="Changer le thème" aria-label="Changer le thème">🌙</button>
@@ -96,12 +100,6 @@
 
   <!-- Calendar -->
   <main id="calendar-container" role="main"></main>
-
-  <!-- Year Navigation -->
-  <div id="year-nav" class="year-nav" aria-label="Navigation par année">
-    <button id="btn-prev-year" class="year-nav-btn" type="button" title="Année précédente">&#9664; <span id="prev-year-label"></span></button>
-    <button id="btn-next-year" class="year-nav-btn" type="button" title="Année suivante"><span id="next-year-label"></span> &#9654;</button>
-  </div>
 
   <!-- Zone Details (clickable toggles) -->
   <div class="zone-info" role="complementary" aria-label="Détails des zones scolaires">

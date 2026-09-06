@@ -156,6 +156,12 @@ body {
   letter-spacing: 0.5px;
 }
 
+.calendar-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* ---------- Theme Toggle ---------- */
 .theme-toggle-btn {
   background: rgba(255,255,255,0.15);
@@ -239,33 +245,22 @@ body {
   padding: 0 8px 4px;
 }
 
-/* ---------- Year Navigation ---------- */
-.year-nav {
-  max-width: 1200px;
-  margin: 0 auto 12px;
-  padding: 0 8px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
 .year-nav-btn {
-  background: var(--surface);
-  color: var(--primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px 16px;
-  font-size: 0.85rem;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: var(--shadow-1);
+  box-shadow: none;
+  white-space: nowrap;
 }
 
 .year-nav-btn:hover:not(:disabled) {
-  background: var(--primary);
-  color: #fff;
-  box-shadow: var(--shadow-2);
+  background: rgba(255,255,255,0.3);
 }
 
 .year-nav-btn:disabled {
@@ -636,8 +631,7 @@ body {
   }
 
   .controls-bar,
-  .app-footer,
-  .year-nav {
+  .app-footer {
     display: none;
   }
 
