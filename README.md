@@ -17,6 +17,7 @@ Calendrier annuel français complet — 100 % statique, sans framework, sans dé
 - **Filtrage des zones** — cliquer sur une zone pour l'afficher ou la masquer ; le choix est mémorisé dans un cookie
 - **Sélection de période** — cliquer ou cliquer-glisser sur le calendrier pour sélectionner une plage de dates ; affiche le nombre total de jours et de jours ouvrés (hors week-ends et jours fériés). Cliquer en dehors du calendrier efface la sélection
 - **Thème sombre** — basculer entre thème clair et sombre via le bouton dans l'en-tête ; le choix est mémorisé dans un cookie
+- **Disposition des mois** — basculer entre un affichage sur une ou deux lignes ; le choix est mémorisé dans un cookie
 - **Scroll automatique** — la page défile vers la date du jour au chargement
 - **Responsive** — mise en page adaptée aux écrans larges et mobiles
 - **Impression** — feuille de styles dédiée pour l'impression
