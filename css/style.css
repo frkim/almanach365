@@ -61,10 +61,10 @@
   --shadow-1: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.5);
   --shadow-2: 0 3px 6px rgba(0,0,0,0.5), 0 3px 6px rgba(0,0,0,0.5);
 
-  --samedi-bg: #2a2a50;
+  --samedi-bg: #1a3a6a;
   --dimanche-bg: #1a3a6a;
   --ferie-bg: #6a203f;
-  --ferie-text: #ff45f6;
+  --ferie-text: #00e676;
   --today-bg: #cc3030;
   --today-border: #ff5555;
 
@@ -284,6 +284,10 @@ body {
   width: 100%;
   box-shadow: var(--shadow-1);
   table-layout: fixed;
+}
+
+.semester-table--annual {
+  width: 200%;
 }
 
 .sem-month-header {

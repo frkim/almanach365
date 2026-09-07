@@ -513,7 +513,7 @@
     wrapper.className = 'semester-wrapper';
 
     var table = document.createElement('table');
-    table.className = 'semester-table';
+    table.className = 'semester-table' + (moisFin - moisDebut === 11 ? ' semester-table--annual' : '');
 
     // Colgroup pour fixer les largeurs de colonnes (largeur fixe pour les barres de vacances)
     var szBarWidth = 6;
