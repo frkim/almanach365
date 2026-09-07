@@ -25,6 +25,7 @@
 
   let vacancesData = [];
   let zonesVisibles = loadZonesCookie();
+  let dispositionMois = loadMonthLayoutCookie();
 
   // Date range selection state
   let selectionStart = null;
@@ -41,6 +42,38 @@
 
   function saveZonesCookie() {
     document.cookie = 'zones=' + encodeURIComponent(JSON.stringify(zonesVisibles)) + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function loadMonthLayoutCookie() {
+    var match = document.cookie.match(/(?:^|;\s*)monthLayout=([^;]*)/);
+    return match && match[1] === 'one' ? 'one' : 'two';
+  }
+
+  function saveMonthLayoutCookie() {
+    document.cookie = 'monthLayout=' + dispositionMois + ';path=/;max-age=31536000;SameSite=Lax';
+  }
+
+  function applyMonthLayout() {
+    var btn = document.getElementById('btn-month-layout-toggle');
+    if (!btn) return;
+    var singleRow = dispositionMois === 'one';
+    var label = singleRow ? 'Afficher les mois sur deux lignes' : 'Afficher les mois sur une ligne';
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('aria-pressed', singleRow ? 'true' : 'false');
+  }
+
+  function setupMonthLayoutToggle() {
+    applyMonthLayout();
+    var btn = document.getElementById('btn-month-layout-toggle');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        dispositionMois = dispositionMois === 'one' ? 'two' : 'one';
+        applyMonthLayout();
+        saveMonthLayoutCookie();
+        genererCalendrier();
+      });
+    }
   }
 
   /** Dark theme support */
@@ -83,6 +116,7 @@
    */
   function init() {
     setupThemeToggle();
+    setupMonthLayoutToggle();
     setupYearNav();
     setupZoneCards();
     setupSelectionClear();
@@ -463,12 +497,12 @@
 
     datesSpeciales = getDatesSpeciales(anneeAffichee);
 
-    // Semestre 1 : Janvier - Juin
-    var sem1 = creerSemestre(0, 5);
-    container.appendChild(sem1);
-
-    // Semestre 2 : Juillet - Décembre
-    container.appendChild(creerSemestre(6, 11));
+    if (dispositionMois === 'one') {
+      container.appendChild(creerSemestre(0, 11));
+    } else {
+      container.appendChild(creerSemestre(0, 5));
+      container.appendChild(creerSemestre(6, 11));
+    }
   }
 
   /**
